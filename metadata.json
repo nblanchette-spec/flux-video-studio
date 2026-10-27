@@ -1,0 +1,6 @@
+{
+  "name": "FLUX Video Studio",
+  "description": "Simplified FLUX video generation studio with creative controls, multi-mode keyframing, and interactive preview scrubber.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
