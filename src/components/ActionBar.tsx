@@ -30,48 +30,44 @@ export const ActionBar: React.FC<ActionBarProps> = ({
   canDownload,
 }) => {
   return (
-    <div className="bg-zinc-950/90 border border-zinc-800/90 rounded-2xl p-3 backdrop-blur-md shadow-2xl flex flex-wrap items-center justify-between gap-3">
-      {/* Primary Generation Action */}
-      <div className="flex-1 min-w-[240px]">
+    <div className="bg-neutral-900/80 border border-white/[0.08] rounded-2xl p-3 backdrop-blur-xl shadow-lg flex flex-wrap items-center justify-between gap-3 text-neutral-100">
+      {/* Primary Generation CTA */}
+      <div className="flex-1 min-w-[220px]">
         <button
           type="button"
           onClick={onGenerate}
           disabled={isGenerating}
-          className="w-full relative group overflow-hidden py-3 px-5 rounded-xl font-bold text-sm tracking-wide text-white transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-orange-600 via-amber-600 to-rose-600 hover:from-orange-500 hover:via-amber-500 hover:to-rose-500 active:scale-[0.99] border border-orange-400/30"
+          className="w-full py-2.5 px-5 rounded-xl font-medium text-xs tracking-tight text-white transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed bg-[#0071e3] hover:bg-[#0077ed] active:scale-[0.99] flex items-center justify-center gap-2"
         >
-          <div className="flex items-center justify-center gap-2 relative z-10">
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin text-white" />
-                <span>Synthesizing FLUX Latents...</span>
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 text-amber-200" />
-                <span>Generate Video</span>
-                <span className="ml-1.5 px-2 py-0.5 rounded-full bg-black/40 text-[11px] font-mono font-medium text-amber-200 border border-white/10">
-                  {costEstimate.formatted}
-                </span>
-              </>
-            )}
-          </div>
-          {/* Button shine animation */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          {isGenerating ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Synthesizing Video...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="font-semibold">Generate Video</span>
+              <span className="ml-1 text-[11px] font-mono opacity-80">
+                • {costEstimate.formatted}
+              </span>
+            </>
+          )}
         </button>
       </div>
 
       {/* Secondary Actions */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {/* Extend Video Button */}
+      <div className="flex items-center gap-2">
+        {/* Extend Video */}
         <button
           type="button"
           onClick={onExtend}
           disabled={!canExtend || isGenerating}
-          className="flex items-center gap-2 py-2.5 px-3.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white border border-zinc-800 hover:border-zinc-700 text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-          title="Loads clip's final frame into Start slot to synthesize next segment"
+          className="flex items-center gap-1.5 py-2.5 px-3.5 rounded-xl bg-neutral-800/80 hover:bg-neutral-700/80 text-neutral-200 hover:text-white border border-white/[0.08] text-xs font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          title="Chain final frame to synthesize continuous extension"
         >
-          <ArrowRight className="w-4 h-4 text-cyan-400" />
-          <span>Extend Video</span>
+          <ArrowRight className="w-3.5 h-3.5 text-neutral-300" />
+          <span>Extend</span>
         </button>
 
         {/* Download MP4 */}
@@ -79,11 +75,11 @@ export const ActionBar: React.FC<ActionBarProps> = ({
           type="button"
           onClick={onDownload}
           disabled={!canDownload || isGenerating}
-          className="flex items-center gap-2 py-2.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-100 hover:text-white border border-zinc-700 text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
-          title="Direct export for full-resolution .mp4"
+          className="flex items-center gap-1.5 py-2.5 px-3.5 rounded-xl bg-neutral-800/80 hover:bg-neutral-700/80 text-neutral-200 hover:text-white border border-white/[0.08] text-xs font-medium transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+          title="Direct export for full-resolution MP4"
         >
-          <Download className="w-4 h-4 text-emerald-400" />
-          <span>Download .MP4</span>
+          <Download className="w-3.5 h-3.5 text-neutral-300" />
+          <span>Export MP4</span>
         </button>
       </div>
     </div>

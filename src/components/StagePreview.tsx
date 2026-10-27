@@ -7,8 +7,9 @@ import {
   Volume2,
   VolumeX,
   Repeat,
-  Radio,
   Film,
+  SkipBack,
+  SkipForward,
 } from 'lucide-react';
 import { AspectRatio, VideoTake } from '../types/flux';
 import { formatTimecode } from '../utils/fluxVideoUtils';
@@ -122,7 +123,6 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't trigger if user is typing in textarea or input
       const activeTag = document.activeElement?.tagName.toLowerCase();
       if (activeTag === 'textarea' || activeTag === 'input') return;
 
@@ -154,9 +154,9 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
 
   // Aspect ratio container sizing
   const containerAspectClass = {
-    '16:9': 'aspect-video max-w-3xl max-h-[380px]',
-    '9:16': 'aspect-[9/16] max-h-[380px] w-auto',
-    '1:1': 'aspect-square max-h-[380px] w-auto',
+    '16:9': 'aspect-video max-w-3xl max-h-[400px]',
+    '9:16': 'aspect-[9/16] max-h-[400px] w-auto',
+    '1:1': 'aspect-square max-h-[400px] w-auto',
   }[aspectRatio];
 
   return (
@@ -164,37 +164,36 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
       ref={containerRef}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="flex-1 flex flex-col bg-zinc-950/60 rounded-2xl border border-zinc-800/80 overflow-hidden relative"
+      className="flex-1 flex flex-col bg-neutral-900/40 rounded-2xl border border-white/[0.08] overflow-hidden relative shadow-lg text-neutral-100"
     >
       {/* Stage Header Info */}
-      <div className="h-10 px-4 bg-zinc-900/70 border-b border-zinc-800 flex items-center justify-between text-xs text-zinc-400">
+      <div className="h-10 px-4 bg-neutral-900/60 border-b border-white/[0.08] flex items-center justify-between text-xs text-neutral-400">
         <div className="flex items-center gap-2">
-          <Film className="w-3.5 h-3.5 text-orange-400" />
-          <span className="font-semibold text-zinc-200 truncate max-w-xs">
-            {currentTake ? currentTake.title : 'Stage Preview • Ready for Generation'}
+          <span className="font-medium text-white truncate max-w-sm">
+            {currentTake ? currentTake.title : 'Preview Stage'}
           </span>
           {currentTake && (
-            <span className="text-[10px] bg-zinc-800 text-zinc-300 px-1.5 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-white/10 text-neutral-200 px-1.5 py-0.5 rounded font-mono">
               {currentTake.aspectRatio} • {currentTake.resolution}
             </span>
           )}
         </div>
 
         <div className="flex items-center gap-3 font-mono text-[11px]">
-          <span className="text-zinc-300">
+          <span className="text-white">
             {formatTimecode(currentTime, fps)} / {formatTimecode(duration, fps)}
           </span>
-          <span className="hidden sm:inline-block text-zinc-500">
-            Frame {currentFrameNumber}/{totalFrames} ({fps}fps)
+          <span className="hidden sm:inline-block text-neutral-500">
+            Frame {currentFrameNumber}/{totalFrames}
           </span>
         </div>
       </div>
 
       {/* Main Video Viewport */}
-      <div className="flex-1 flex items-center justify-center p-3 relative bg-black/60 min-h-[340px]">
+      <div className="flex-1 flex items-center justify-center p-4 relative bg-black min-h-[340px]">
         {/* Aspect Ratio Box */}
         <div
-          className={`w-full relative rounded-xl overflow-hidden shadow-2xl bg-black border border-zinc-800/80 flex items-center justify-center transition-all duration-300 ${containerAspectClass}`}
+          className={`w-full relative rounded-xl overflow-hidden shadow-2xl bg-neutral-950 border border-white/[0.08] flex items-center justify-center transition-all duration-300 ${containerAspectClass}`}
         >
           {currentTake ? (
             <video
@@ -211,13 +210,13 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
               className="w-full h-full object-cover cursor-pointer"
             />
           ) : (
-            <div className="flex flex-col items-center justify-center p-6 text-center text-zinc-500 space-y-2">
-              <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-600">
-                <Play className="w-6 h-6 ml-1" />
+            <div className="flex flex-col items-center justify-center p-6 text-center text-neutral-500 space-y-2">
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400">
+                <Play className="w-5 h-5 ml-0.5" />
               </div>
-              <p className="text-xs font-medium text-zinc-400">Ready to synthesize sequence</p>
-              <p className="text-[11px] text-zinc-600 max-w-xs">
-                Select your parameters in Column 1 and click Generate Video
+              <p className="text-xs font-medium text-neutral-300">Ready to synthesize</p>
+              <p className="text-[11px] text-neutral-500 max-w-xs">
+                Configure your prompt and click Generate Video
               </p>
             </div>
           )}
@@ -227,11 +226,11 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
             <button
               type="button"
               onClick={togglePlay}
-              className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 transition-all group"
+              className="absolute inset-0 flex items-center justify-center bg-black/25 hover:bg-black/15 transition-all group"
               aria-label="Play video"
             >
-              <div className="w-14 h-14 rounded-full bg-orange-500/90 hover:bg-orange-500 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                <Play className="w-6 h-6 ml-0.5 fill-current" />
+              <div className="w-12 h-12 rounded-full bg-white text-neutral-950 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform">
+                <Play className="w-5 h-5 ml-0.5 fill-current" />
               </div>
             </button>
           )}
@@ -239,38 +238,18 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
           {/* Resolution Badge over player */}
           {currentTake && (
             <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5">
-              {currentTake.resolution === '1080p' ? (
-                <div className="bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-purple-950/90 backdrop-blur-md border border-purple-400/60 px-2.5 py-1 rounded-md text-[11px] font-bold text-white shadow-xl flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span>HD / 1080p</span>
-                </div>
-              ) : currentTake.resolution === '4K' ? (
-                <div className="bg-gradient-to-r from-amber-600/90 to-orange-600/90 backdrop-blur-md border border-amber-300/60 px-2.5 py-1 rounded-md text-[11px] font-bold text-white shadow-xl flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-200 animate-pulse" />
-                  <span>4K Ultra HD</span>
-                </div>
-              ) : (
-                <div className="bg-zinc-900/80 backdrop-blur-md border border-zinc-700/80 px-2 py-0.5 rounded text-[10px] font-mono text-zinc-300">
-                  480p Draft
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Audio Synthesized Badge */}
-          {currentTake?.hasAudio && (
-            <div className="absolute top-3 right-3 bg-zinc-950/80 backdrop-blur-md border border-amber-500/30 px-2 py-1 rounded-md text-[10px] text-amber-300 flex items-center gap-1.5 shadow-lg z-20">
-              <Radio className="w-3 h-3 text-amber-400 animate-pulse" />
-              <span className="font-mono">FLUX Native Audio Track</span>
+              <div className="bg-black/70 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-semibold text-white shadow-lg">
+                {currentTake.resolution} {currentTake.resolution !== '480p' ? 'HD' : ''}
+              </div>
             </div>
           )}
         </div>
       </div>
 
       {/* Frame Scrubber & Playback Controls Bar */}
-      <div className="p-3 bg-zinc-950 border-t border-zinc-800 space-y-2">
-        {/* Timeline Scrubber Slider with frame tick marks */}
-        <div className="relative flex items-center group">
+      <div className="p-3 bg-neutral-900/80 border-t border-white/[0.08] space-y-2">
+        {/* Scrubber */}
+        <div className="relative flex items-center">
           <input
             type="range"
             min="0"
@@ -279,81 +258,106 @@ export const StagePreview: React.FC<StagePreviewProps> = ({
             value={currentTime}
             onChange={handleScrubberChange}
             disabled={!currentTake}
-            className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-orange-500 group-hover:h-2 transition-all disabled:opacity-30"
+            className="w-full cursor-pointer disabled:opacity-30"
           />
         </div>
 
-        {/* Transport Bar Controls */}
-        <div className="flex items-center justify-between gap-2 pt-1">
-          {/* Left: Playback, Loop & Audio */}
-          <div className="flex items-center gap-2">
-            {/* Play/Pause */}
+        {/* Transport Controls Bar */}
+        <div className="flex items-center justify-between gap-2 pt-0.5 text-xs">
+          {/* Left: Playback & Step */}
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={togglePlay}
               disabled={!currentTake}
-              className="w-8 h-8 rounded-lg bg-orange-600 hover:bg-orange-500 text-white flex items-center justify-center transition-colors shadow-sm disabled:opacity-40"
+              className="w-7 h-7 rounded-lg bg-white text-neutral-950 flex items-center justify-center transition-colors shadow-xs disabled:opacity-30 hover:bg-neutral-200"
               title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}
               aria-label={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
-                <Pause className="w-4 h-4 fill-current" />
+                <Pause className="w-3.5 h-3.5 fill-current" />
               ) : (
-                <Play className="w-4 h-4 fill-current ml-0.5" />
+                <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
               )}
+            </button>
+
+            {/* Step Back 1 Frame */}
+            <button
+              type="button"
+              onClick={() => stepFrame(-1)}
+              disabled={!currentTake}
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-30"
+              title="Step Back 1 Frame (←)"
+            >
+              <SkipBack className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Step Forward 1 Frame */}
+            <button
+              type="button"
+              onClick={() => stepFrame(1)}
+              disabled={!currentTake}
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-30"
+              title="Step Forward 1 Frame (→)"
+            >
+              <SkipForward className="w-3.5 h-3.5" />
             </button>
 
             {/* Loop Toggle */}
             <button
               type="button"
               onClick={() => setIsLooping(!isLooping)}
-              className={`p-1.5 rounded-md border text-xs transition-colors ${
+              className={`p-1.5 rounded-lg transition-colors ${
                 isLooping
-                  ? 'bg-zinc-800 text-orange-400 border-orange-500/40'
-                  : 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-zinc-300'
+                  ? 'text-white bg-white/10'
+                  : 'text-neutral-500 hover:text-white'
               }`}
-              title="Toggle Looping"
-              aria-label="Toggle Looping"
+              title="Toggle Loop Playback"
             >
               <Repeat className="w-3.5 h-3.5" />
             </button>
+          </div>
 
-            {/* Audio Toggle */}
+          {/* Right: Speed & Volume & Fullscreen */}
+          <div className="flex items-center gap-2">
+            {/* Speed Selector */}
+            <div className="flex items-center bg-neutral-950/60 rounded-md p-0.5 border border-white/[0.08] text-[10px] font-mono">
+              {[0.5, 1, 1.5].map((rate) => (
+                <button
+                  key={rate}
+                  type="button"
+                  onClick={() => handleSpeedChange(rate)}
+                  className={`px-1.5 py-0.5 rounded transition-colors ${
+                    playbackRate === rate
+                      ? 'bg-neutral-800 text-white font-semibold'
+                      : 'text-neutral-400 hover:text-white'
+                  }`}
+                >
+                  {rate}x
+                </button>
+              ))}
+            </div>
+
+            {/* Mute toggle */}
             <button
               type="button"
               onClick={() => setIsMuted(!isMuted)}
-              disabled={!currentTake?.hasAudio}
-              className={`p-1.5 rounded-md border text-xs transition-colors ${
-                isMuted || !currentTake?.hasAudio
-                  ? 'bg-zinc-900 text-zinc-500 border-zinc-800'
-                  : 'bg-zinc-800 text-amber-400 border-amber-500/40'
-              }`}
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
               title={isMuted ? 'Unmute' : 'Mute'}
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
             >
-              {isMuted || !currentTake?.hasAudio ? (
+              {isMuted ? (
                 <VolumeX className="w-3.5 h-3.5" />
               ) : (
                 <Volume2 className="w-3.5 h-3.5" />
               )}
             </button>
-          </div>
 
-          {/* Center: Timecode & Frame Indicator */}
-          <div className="text-xs font-mono text-zinc-400 px-2.5 py-1 bg-zinc-900 rounded-md border border-zinc-800/80">
-            <span className="text-white font-semibold">{formatTimecode(currentTime, fps)}</span>
-            <span className="text-zinc-600 mx-1">/</span>
-            <span>{formatTimecode(duration, fps)}</span>
-          </div>
-
-          {/* Right: Fullscreen Toggle */}
-          <div className="flex items-center gap-1.5">
+            {/* Fullscreen */}
             <button
               type="button"
               onClick={toggleFullscreen}
-              className="p-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition-colors"
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 transition-colors"
               title="Fullscreen (F)"
-              aria-label="Toggle Fullscreen"
             >
               {isFullscreen ? (
                 <Minimize2 className="w-3.5 h-3.5" />

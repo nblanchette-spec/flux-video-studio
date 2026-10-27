@@ -128,7 +128,7 @@ export function saveProjectsToStorage(projects: FluxProject[]): void {
 export function createNewProject(
   title: string = 'Untitled Session',
   templateParams?: Partial<FluxGenerationParams>,
-  folder: string = 'Default Projects'
+  folder?: string
 ): FluxProject {
   const id = `proj-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
   const mergedParams: FluxGenerationParams = {
@@ -143,7 +143,7 @@ export function createNewProject(
     description: `Created on ${new Date().toLocaleDateString()}`,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-    folder: folder.trim() || 'Default Projects',
+    folder: folder?.trim() || undefined,
     params: mergedParams,
     takes: [],
     currentTakeId: null,
@@ -208,16 +208,15 @@ export function filterProjects(
   searchQuery: string = ''
 ): FluxProject[] {
   return projects.filter((p) => {
-    if (folderFilter !== 'all' && p.folder.toLowerCase() !== folderFilter.toLowerCase()) {
+    if (folderFilter !== 'all' && p.folder && p.folder.toLowerCase() !== folderFilter.toLowerCase()) {
       return false;
     }
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       const matchTitle = p.title.toLowerCase().includes(q);
       const matchDesc = p.description?.toLowerCase().includes(q) || false;
-      const matchFolder = p.folder.toLowerCase().includes(q);
       const matchPrompt = p.params.prompt.toLowerCase().includes(q);
-      return matchTitle || matchDesc || matchFolder || matchPrompt;
+      return matchTitle || matchDesc || matchPrompt;
     }
     return true;
   });

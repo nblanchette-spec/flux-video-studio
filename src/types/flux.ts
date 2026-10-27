@@ -98,7 +98,7 @@ export interface FluxProject {
   description?: string;
   createdAt: number;
   updatedAt: number;
-  folder: string; // e.g. 'Default', 'Commercials', 'Sci-Fi'
+  folder?: string;
   params: FluxGenerationParams;
   takes: VideoTake[];
   currentTakeId: string | null;

@@ -620,8 +620,8 @@ export default function App() {
   const [mobileTab, setMobileTab] = useState<'controls' | 'stage'>('controls');
 
   return (
-    <div className="h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans select-none antialiased overflow-hidden">
-      {/* Studio Header with View Switcher & Project Manager */}
+    <div className="h-screen bg-[#09090b] text-neutral-100 flex flex-col select-none antialiased overflow-hidden">
+      {/* Studio Header with View Switcher & Session Manager */}
       <Header
         onLoadPreset={handleLoadPreset}
         userCredits={userCredits}
@@ -649,7 +649,7 @@ export default function App() {
             onSelectTake={(take) => {
               setCurrentTake(take);
               setCurrentView('studio');
-              showToast(`Loaded ${take.title} into Studio player`, 'info');
+              showToast(`Loaded "${take.title}" in Studio player`, 'info');
             }}
             onToggleFavorite={handleToggleFavorite}
             onBatchUpscale={handleBatchUpscale}
@@ -660,28 +660,28 @@ export default function App() {
       ) : (
         <>
           {/* Mobile Tab Switcher */}
-          <div className="lg:hidden flex border-b border-zinc-800 bg-zinc-900/90 text-xs font-semibold">
+          <div className="lg:hidden flex border-b border-white/[0.08] bg-neutral-900/90 text-xs font-medium">
             <button
               type="button"
               onClick={() => setMobileTab('controls')}
-              className={`flex-1 py-2 text-center transition-colors border-b-2 ${
+              className={`flex-1 py-2.5 text-center transition-colors border-b-2 ${
                 mobileTab === 'controls'
-                  ? 'text-orange-400 border-orange-500 bg-zinc-800/50'
-                  : 'text-zinc-400 border-transparent hover:text-zinc-200'
+                  ? 'text-white border-white bg-white/5 font-semibold'
+                  : 'text-neutral-400 border-transparent hover:text-white'
               }`}
             >
-              Creative Controls
+              Controls
             </button>
             <button
               type="button"
               onClick={() => setMobileTab('stage')}
-              className={`flex-1 py-2 text-center transition-colors border-b-2 ${
+              className={`flex-1 py-2.5 text-center transition-colors border-b-2 ${
                 mobileTab === 'stage'
-                  ? 'text-orange-400 border-orange-500 bg-zinc-800/50'
-                  : 'text-zinc-400 border-transparent hover:text-zinc-200'
+                  ? 'text-white border-white bg-white/5 font-semibold'
+                  : 'text-neutral-400 border-transparent hover:text-white'
               }`}
             >
-              Preview & Stage
+              Preview Stage
             </button>
           </div>
 
@@ -690,7 +690,7 @@ export default function App() {
             {/* Column 1: Controls (Left Panel) */}
             <section
               aria-label="Creative Controls"
-              className={`w-full lg:w-[460px] xl:w-[480px] shrink-0 h-full min-h-0 border-b lg:border-b-0 lg:border-r border-zinc-800/80 bg-zinc-950 flex flex-col overflow-hidden ${
+              className={`w-full lg:w-[460px] xl:w-[480px] shrink-0 h-full min-h-0 border-b lg:border-b-0 lg:border-r border-white/[0.08] bg-neutral-950 flex flex-col overflow-hidden ${
                 mobileTab === 'controls' ? 'flex' : 'hidden lg:flex'
               }`}
             >
@@ -704,7 +704,7 @@ export default function App() {
             {/* Column 2: Stage & Export (Right Panel) */}
             <section
               aria-label="Preview & Stage"
-              className={`flex-1 h-full min-h-0 flex flex-col p-3 sm:p-4 overflow-y-auto space-y-4 bg-gradient-to-b from-zinc-950 via-zinc-900/40 to-zinc-950 ${
+              className={`flex-1 h-full min-h-0 flex flex-col p-4 sm:p-5 overflow-y-auto space-y-4 bg-neutral-950 ${
                 mobileTab === 'stage' ? 'flex' : 'hidden lg:flex'
               }`}
             >
@@ -719,7 +719,7 @@ export default function App() {
                 isGenerating={queueStatus.isGenerating}
               />
 
-              {/* Video Output & Upscale Bar (fal-ai/video-upscaler) */}
+              {/* Video Output & Upscale Bar */}
               <UpscaleBanner
                 currentTake={currentTake}
                 upscaleState={upscaleState}
@@ -740,27 +740,23 @@ export default function App() {
               />
 
               {/* Docked Generations Gallery Section */}
-              <div className="border border-zinc-800/90 rounded-2xl overflow-hidden bg-zinc-950/80 shadow-xl">
-                <div className="px-3.5 py-2.5 bg-zinc-900/80 border-b border-zinc-800 flex items-center justify-between text-xs">
+              <div className="border border-white/[0.08] rounded-2xl overflow-hidden bg-neutral-900/60 shadow-lg">
+                <div className="px-4 py-3 bg-neutral-900/80 border-b border-white/[0.08] flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
-                    <History className="w-3.5 h-3.5 text-orange-400" />
-                    <span className="font-bold text-zinc-200">
-                      Generations Gallery ({takes.length})
-                    </span>
-                    <span className="text-[10px] text-zinc-500 font-mono hidden sm:inline">
-                      • Hover to preview • Star to favorite • Check to batch upscale
+                    <span className="font-semibold text-white">
+                      Generations History ({takes.length})
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setCurrentView('gallery')}
-                    className="text-[11px] font-semibold text-orange-400 hover:text-orange-300 flex items-center gap-1 hover:underline"
+                    className="text-[11px] font-medium text-neutral-400 hover:text-white flex items-center gap-1 transition-colors"
                   >
-                    <span>Full Gallery View</span>
+                    <span>Full Screen Gallery</span>
                     <Grid className="w-3 h-3" />
                   </button>
                 </div>
-                <div className="max-h-[460px] overflow-y-auto">
+                <div className="max-h-[440px] overflow-y-auto">
                   <GenerationsGallery
                     takes={takes}
                     selectedTakeId={currentTake?.id || null}

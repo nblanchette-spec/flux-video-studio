@@ -11,7 +11,6 @@ import {
   ChevronDown,
   ChevronUp,
   Dices,
-  Info,
   Maximize2,
   Smartphone,
   Square,
@@ -21,7 +20,6 @@ import {
   AspectRatio,
   DurationSeconds,
   FluxGenerationParams,
-  QualityTier,
   TimelineKeyframe,
   WorkflowMode,
 } from '../types/flux';
@@ -38,38 +36,12 @@ const WORKFLOW_TABS: {
   id: WorkflowMode;
   label: string;
   icon: React.ElementType;
-  desc: string;
 }[] = [
-  {
-    id: 'text_to_video',
-    label: 'Text to Video',
-    icon: Type,
-    desc: 'Prompt & camera motion synthesis',
-  },
-  {
-    id: 'image_to_video',
-    label: 'Image to Video',
-    icon: ImageIcon,
-    desc: 'Single starting keyframe asset',
-  },
-  {
-    id: 'first_last_frame',
-    label: 'First + Last Frame',
-    icon: SplitSquareVertical,
-    desc: 'Interpolate start & end targets',
-  },
-  {
-    id: 'keyframes_timeline',
-    label: 'Keyframes Timeline',
-    icon: Clock,
-    desc: 'Up to 10 anchored frames with timestamps',
-  },
-  {
-    id: 'video_extend',
-    label: 'Video Extend / Edit',
-    icon: Film,
-    desc: 'Extend clip or restyle motion',
-  },
+  { id: 'text_to_video', label: 'Text to Video', icon: Type },
+  { id: 'image_to_video', label: 'Image to Video', icon: ImageIcon },
+  { id: 'first_last_frame', label: 'Keyframe Pair', icon: SplitSquareVertical },
+  { id: 'keyframes_timeline', label: 'Timeline', icon: Clock },
+  { id: 'video_extend', label: 'Extend & Edit', icon: Film },
 ];
 
 const CAMERA_TAGS = [
@@ -109,28 +81,24 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950 border-r border-zinc-800/80 overflow-y-auto">
-      {/* Panel Title */}
-      <div className="p-4 pb-2 border-b border-zinc-900 flex items-center justify-between">
-        <div>
-          <h2 className="text-sm font-bold text-zinc-100 uppercase tracking-wider flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-orange-400" />
-            Creative Controls
-          </h2>
-          <p className="text-[11px] text-zinc-500">Configure FLUX generation pipeline</p>
-        </div>
-        <span className="text-[10px] font-mono bg-zinc-900 text-zinc-400 px-2 py-0.5 rounded border border-zinc-800">
-          Column 1
+    <div className="flex flex-col h-full bg-neutral-950 text-neutral-100 overflow-y-auto">
+      {/* Panel Header */}
+      <div className="px-5 py-3 border-b border-white/[0.08] flex items-center justify-between">
+        <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400">
+          Studio Controls
+        </span>
+        <span className="text-[10px] font-mono text-neutral-500">
+          FLUX.1 Turbo
         </span>
       </div>
 
-      <div className="p-4 space-y-5 flex-1">
-        {/* 1. Workflow Mode Tab Selector */}
+      <div className="p-4 sm:p-5 space-y-6 flex-1">
+        {/* Workflow Mode Selector */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-300 block">
-            1. Workflow Mode
+          <label className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 block">
+            Workflow Mode
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-zinc-900/90 rounded-xl border border-zinc-800">
+          <div className="grid grid-cols-5 gap-1 p-1 bg-neutral-900/80 rounded-xl border border-white/[0.08]">
             {WORKFLOW_TABS.map((tab) => {
               const Icon = tab.icon;
               const isActive = params.workflowMode === tab.id;
@@ -140,15 +108,15 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   type="button"
                   onClick={() => handleModeChange(tab.id)}
                   disabled={disabled}
-                  className={`flex flex-col items-center justify-center p-2 rounded-lg text-left transition-all relative ${
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all ${
                     isActive
-                      ? 'bg-gradient-to-b from-orange-500/20 to-orange-600/10 text-orange-300 border border-orange-500/40 shadow-sm'
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60 border border-transparent'
+                      ? 'bg-neutral-800 text-white shadow-xs font-medium'
+                      : 'text-neutral-400 hover:text-white hover:bg-white/5'
                   }`}
-                  title={tab.desc}
+                  title={tab.label}
                 >
-                  <Icon className={`w-4 h-4 mb-1 ${isActive ? 'text-orange-400' : 'text-zinc-400'}`} />
-                  <span className="text-[11px] font-medium leading-tight text-center line-clamp-1">
+                  <Icon className="w-3.5 h-3.5 mb-1" />
+                  <span className="text-[10px] leading-tight text-center line-clamp-1">
                     {tab.label}
                   </span>
                 </button>
@@ -157,12 +125,14 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
           </div>
         </div>
 
-        {/* 2. Media Dropzones (Context-sensitive) */}
+        {/* Media Dropzones */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-zinc-300 flex items-center justify-between">
-            <span>2. Media Dropzones</span>
-            <span className="text-[10px] font-mono text-zinc-500">Context Sensitive</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400">
+              Media Input
+            </label>
+            <span className="text-[10px] text-neutral-500 font-mono">Drag & Drop</span>
+          </div>
           <MediaDropzones
             workflowMode={params.workflowMode}
             duration={params.duration}
@@ -182,32 +152,31 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
           />
         </div>
 
-        {/* 3. Prompt & Audio Direction */}
-        <div className="space-y-3 pt-1 border-t border-zinc-900">
+        {/* Prompt & Audio Direction */}
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
-              <span>3. Prompt & Audio Direction</span>
+            <label className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400">
+              Prompt & Motion Direction
             </label>
-            <span className="text-[10px] text-zinc-500 font-mono">
+            <span className="text-[10px] text-neutral-500 font-mono">
               {params.prompt.length} chars
             </span>
           </div>
 
-          {/* Multiline Prompt Box */}
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <textarea
-              rows={4}
+              rows={3}
               value={params.prompt}
               disabled={disabled}
               onChange={(e) => onChangeParams({ prompt: e.target.value })}
-              placeholder="Describe scene motion, camera action, lighting dynamics, narrative cues..."
-              className="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-hidden focus:border-orange-500/80 focus:ring-1 focus:ring-orange-500/40 transition-all resize-y leading-relaxed"
+              placeholder="Describe scene motion, camera dynamics, lighting, and narrative atmosphere..."
+              className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 transition-all resize-y leading-relaxed"
             />
 
-            {/* Quick Camera Tags */}
-            <div className="flex flex-wrap items-center gap-1">
-              <span className="text-[10px] text-zinc-500 mr-1 flex items-center gap-0.5">
-                <Sparkles className="w-3 h-3 text-amber-400" /> Camera:
+            {/* Subtle Camera Motion Pills */}
+            <div className="flex flex-wrap items-center gap-1 pt-0.5">
+              <span className="text-[10px] text-neutral-500 mr-1 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-neutral-400" /> Camera:
               </span>
               {CAMERA_TAGS.map((tag) => (
                 <button
@@ -215,7 +184,7 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   type="button"
                   onClick={() => handleAddCameraTag(tag)}
                   disabled={disabled}
-                  className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-orange-300 border border-zinc-800 hover:border-zinc-700 transition-colors"
+                  className="text-[10px] px-2 py-0.5 rounded-md bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white border border-white/[0.06] hover:border-white/20 transition-colors"
                 >
                   +{tag}
                 </button>
@@ -223,68 +192,71 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </div>
 
-          {/* Generate Native Audio Toggle */}
-          <div className="bg-zinc-900/70 border border-zinc-800/80 rounded-xl p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div
-                  className={`p-1.5 rounded-lg ${
-                    params.nativeAudio
-                      ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                      : 'bg-zinc-800 text-zinc-400'
-                  }`}
-                >
-                  {params.nativeAudio ? (
-                    <Volume2 className="w-4 h-4" />
-                  ) : (
-                    <VolumeX className="w-4 h-4" />
-                  )}
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-zinc-200">
-                    Generate Native Audio
-                  </div>
-                  <div className="text-[10px] text-zinc-500">
-                    Automatically synthesizes synced audio matching the visual scene
-                  </div>
-                </div>
-              </div>
-
-              {/* iOS style toggle */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={params.nativeAudio}
-                disabled={disabled}
-                onClick={() => onChangeParams({ nativeAudio: !params.nativeAudio })}
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                  params.nativeAudio ? 'bg-orange-500' : 'bg-zinc-700'
+          {/* Sleek Apple Toggle: Native Audio */}
+          <div className="bg-neutral-900/60 border border-white/[0.08] rounded-xl p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div
+                className={`p-1.5 rounded-lg ${
+                  params.nativeAudio
+                    ? 'bg-white/10 text-white'
+                    : 'bg-neutral-800 text-neutral-400'
                 }`}
               >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                    params.nativeAudio ? 'translate-x-4' : 'translate-x-0'
-                  }`}
-                />
-              </button>
+                {params.nativeAudio ? (
+                  <Volume2 className="w-3.5 h-3.5" />
+                ) : (
+                  <VolumeX className="w-3.5 h-3.5" />
+                )}
+              </div>
+              <div>
+                <div className="text-xs font-medium text-white">
+                  Native Sound Design
+                </div>
+                <div className="text-[11px] text-neutral-400">
+                  Synthesize synced dialogue, ambient audio, and foley
+                </div>
+              </div>
             </div>
+
+            {/* Apple style toggle switch */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={params.nativeAudio}
+              disabled={disabled}
+              onClick={() => onChangeParams({ nativeAudio: !params.nativeAudio })}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                params.nativeAudio ? 'bg-white' : 'bg-neutral-700'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full shadow-md ring-0 transition duration-200 ease-in-out mt-0.5 ${
+                  params.nativeAudio
+                    ? 'translate-x-4 bg-neutral-950'
+                    : 'translate-x-0.5 bg-neutral-200'
+                }`}
+              />
+            </button>
           </div>
         </div>
 
-        {/* 4. Quick Presets */}
-        <div className="space-y-3 pt-1 border-t border-zinc-900">
-          <label className="text-xs font-semibold text-zinc-300 block">
-            4. Quick Presets
+        {/* Format & Presets */}
+        <div className="space-y-4">
+          <label className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400 block">
+            Format & Quality
           </label>
 
           {/* Aspect Ratio Chips */}
-          <div className="space-y-1">
-            <span className="text-[11px] text-zinc-400">Aspect Ratio</span>
-            <div className="grid grid-cols-3 gap-2">
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-neutral-300">Aspect Ratio</span>
+              <span className="text-[10px] text-neutral-500 font-mono">{params.aspectRatio}</span>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 p-1 bg-neutral-900/80 rounded-xl border border-white/[0.08]">
               {[
-                { id: '16:9' as AspectRatio, label: '16:9 Landscape', icon: Maximize2 },
-                { id: '9:16' as AspectRatio, label: '9:16 Vertical', icon: Smartphone },
-                { id: '1:1' as AspectRatio, label: '1:1 Square', icon: Square },
+                { id: '16:9' as AspectRatio, label: '16:9', icon: Maximize2 },
+                { id: '9:16' as AspectRatio, label: '9:16', icon: Smartphone },
+                { id: '1:1' as AspectRatio, label: '1:1', icon: Square },
               ].map((item) => {
                 const Icon = item.icon;
                 const isActive = params.aspectRatio === item.id;
@@ -294,27 +266,27 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                     type="button"
                     onClick={() => onChangeParams({ aspectRatio: item.id })}
                     disabled={disabled}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border text-xs font-medium transition-all ${
+                    className={`flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs transition-all ${
                       isActive
-                        ? 'bg-zinc-800 text-white border-orange-500/80 shadow-xs'
-                        : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200'
+                        ? 'bg-neutral-800 text-white font-medium shadow-xs'
+                        : 'text-neutral-400 hover:text-white'
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{item.id}</span>
+                    <Icon className="w-3 h-3" />
+                    <span>{item.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Duration Preset Buttons */}
-          <div className="space-y-1">
+          {/* Duration Chips */}
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-zinc-400">Duration</span>
-              <span className="text-[10px] text-orange-400 font-mono">Max 20s FLUX Single Take</span>
+              <span className="text-xs text-neutral-300">Duration</span>
+              <span className="text-[10px] text-neutral-500 font-mono">{params.duration} seconds</span>
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-1.5 p-1 bg-neutral-900/80 rounded-xl border border-white/[0.08]">
               {([5, 10, 15, 20] as DurationSeconds[]).map((dur) => {
                 const isActive = params.duration === dur;
                 return (
@@ -323,10 +295,10 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                     type="button"
                     onClick={() => onChangeParams({ duration: dur })}
                     disabled={disabled}
-                    className={`py-2 rounded-lg border text-xs font-mono font-medium transition-all ${
+                    className={`py-1.5 rounded-lg text-xs font-mono transition-all ${
                       isActive
-                        ? 'bg-orange-500/20 text-orange-300 border-orange-500'
-                        : 'bg-zinc-900/80 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200'
+                        ? 'bg-neutral-800 text-white font-semibold shadow-xs'
+                        : 'text-neutral-400 hover:text-white'
                     }`}
                   >
                     {dur}s
@@ -336,35 +308,34 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
             </div>
           </div>
 
-          {/* Resolution Quality Selector */}
+          {/* Quality Tier Selector */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-zinc-300">Resolution Quality</span>
-              <span className="text-[10px] text-zinc-500 font-mono">Two-Stage Workflow</span>
+              <span className="text-xs text-neutral-300">Resolution Quality</span>
+              <span className="text-[10px] text-neutral-500 font-mono">
+                {params.qualityTier === 'draft' ? 'Fast Preview' : 'Production Master'}
+              </span>
             </div>
 
-            {/* Segmented control */}
-            <div className="grid grid-cols-2 gap-2 p-1 bg-zinc-900/90 rounded-xl border border-zinc-800">
+            <div className="grid grid-cols-2 gap-2 p-1 bg-neutral-900/80 rounded-xl border border-white/[0.08]">
               {/* Draft (480p) */}
               <button
                 type="button"
                 onClick={() => onChangeParams({ qualityTier: 'draft' })}
                 disabled={disabled}
-                className={`p-2.5 rounded-lg text-left transition-all relative ${
+                className={`p-2.5 rounded-lg text-left transition-all ${
                   params.qualityTier === 'draft'
-                    ? 'bg-zinc-800 text-white border border-amber-500/70 shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 border border-transparent'
+                    ? 'bg-neutral-800 text-white border border-white/15 shadow-xs'
+                    : 'text-neutral-400 hover:text-white border border-transparent'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
-                    Draft (480p)
-                  </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60 font-semibold">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-xs font-semibold text-white">Draft (480p)</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-neutral-700/60 text-neutral-300 font-medium">
                     Fast
                   </span>
                 </div>
-                <div className="text-[10px] text-amber-300/90 font-mono font-medium">
+                <div className="text-[11px] text-neutral-400 font-mono">
                   ~$0.30 • 5x faster
                 </div>
               </button>
@@ -374,56 +345,54 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                 type="button"
                 onClick={() => onChangeParams({ qualityTier: 'final' })}
                 disabled={disabled}
-                className={`p-2.5 rounded-lg text-left transition-all relative ${
+                className={`p-2.5 rounded-lg text-left transition-all ${
                   params.qualityTier === 'final'
-                    ? 'bg-zinc-800 text-white border border-orange-500/80 shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 border border-transparent'
+                    ? 'bg-neutral-800 text-white border border-white/15 shadow-xs'
+                    : 'text-neutral-400 hover:text-white border border-transparent'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
-                    Full Quality (1080p)
-                  </span>
-                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-orange-950 text-orange-300 border border-orange-800/60 font-semibold">
-                    Pro
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-xs font-semibold text-white">Full Quality (1080p)</span>
+                  <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-white/15 text-white font-medium">
+                    HD
                   </span>
                 </div>
-                <div className="text-[10px] text-zinc-400 font-mono">
-                  ~$2.50 • Production grade
+                <div className="text-[11px] text-neutral-400 font-mono">
+                  ~$2.50 • Production
                 </div>
               </button>
             </div>
           </div>
         </div>
 
-        {/* 5. Advanced Controls (Collapsible Accordion) */}
-        <div className="pt-1 border-t border-zinc-900">
+        {/* Advanced Controls Accordion */}
+        <div className="pt-2 border-t border-white/[0.08]">
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="w-full flex items-center justify-between py-2 text-xs font-semibold text-zinc-300 hover:text-white transition-colors"
+            className="w-full flex items-center justify-between py-2 text-xs font-medium text-neutral-400 hover:text-white transition-colors"
             aria-expanded={showAdvanced}
           >
             <span className="flex items-center gap-1.5">
-              <Sliders className="w-3.5 h-3.5 text-zinc-400" />
-              5. Advanced Controls
+              <Sliders className="w-3.5 h-3.5" />
+              Advanced Parameters
             </span>
-            <span className="text-zinc-400">
+            <span>
               {showAdvanced ? (
-                <ChevronUp className="w-4 h-4" />
+                <ChevronUp className="w-3.5 h-3.5" />
               ) : (
-                <ChevronDown className="w-4 h-4" />
+                <ChevronDown className="w-3.5 h-3.5" />
               )}
             </span>
           </button>
 
           {showAdvanced && (
-            <div className="mt-2 p-3 bg-zinc-900/60 border border-zinc-800/80 rounded-xl space-y-4 text-xs">
-              {/* Guidance Scale (Prompt Adherence) */}
-              <div className="space-y-1.5">
+            <div className="mt-2 p-3.5 bg-neutral-900/60 border border-white/[0.08] rounded-xl space-y-4 text-xs">
+              {/* Guidance Scale */}
+              <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-300 font-medium">Prompt Adherence (Guidance)</span>
-                  <span className="font-mono text-orange-400">{params.guidanceScale.toFixed(1)}</span>
+                  <span className="text-neutral-300">Prompt Adherence</span>
+                  <span className="font-mono text-white text-[11px]">{params.guidanceScale.toFixed(1)}</span>
                 </div>
                 <input
                   type="range"
@@ -435,20 +404,19 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   onChange={(e) =>
                     onChangeParams({ guidanceScale: parseFloat(e.target.value) })
                   }
-                  className="w-full accent-orange-500 cursor-pointer"
+                  className="w-full cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-zinc-500">
-                  <span>1.0 (Natural Motion)</span>
-                  <span>Default: 3.5</span>
-                  <span>8.0 (Strict Prompt)</span>
+                <div className="flex justify-between text-[10px] text-neutral-500 font-mono">
+                  <span>Natural Motion (1.0)</span>
+                  <span>Strict (8.0)</span>
                 </div>
               </div>
 
               {/* Transformation Strength */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-300 font-medium">Transformation Strength</span>
-                  <span className="font-mono text-cyan-400">{params.transformationStrength.toFixed(2)}</span>
+                  <span className="text-neutral-300">Transformation Strength</span>
+                  <span className="font-mono text-white text-[11px]">{params.transformationStrength.toFixed(2)}</span>
                 </div>
                 <input
                   type="range"
@@ -460,19 +428,19 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   onChange={(e) =>
                     onChangeParams({ transformationStrength: parseFloat(e.target.value) })
                   }
-                  className="w-full accent-cyan-500 cursor-pointer"
+                  className="w-full cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-zinc-500">
-                  <span>0.0 (Preserve Pixels)</span>
-                  <span>1.0 (Reimagine)</span>
+                <div className="flex justify-between text-[10px] text-neutral-500 font-mono">
+                  <span>Preserve Pixels</span>
+                  <span>Full Reimagine</span>
                 </div>
               </div>
 
               {/* Inference Steps */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-300 font-medium">Inference Steps</span>
-                  <span className="font-mono text-amber-400">{params.inferenceSteps}</span>
+                  <span className="text-neutral-300">Inference Steps</span>
+                  <span className="font-mono text-white text-[11px]">{params.inferenceSteps}</span>
                 </div>
                 <input
                   type="range"
@@ -484,67 +452,37 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
                   onChange={(e) =>
                     onChangeParams({ inferenceSteps: parseInt(e.target.value, 10) })
                   }
-                  className="w-full accent-amber-500 cursor-pointer"
+                  className="w-full cursor-pointer"
                 />
-                <div className="flex justify-between text-[10px] text-zinc-500">
-                  <span>15 (High Speed)</span>
-                  <span>30 (Balanced)</span>
-                  <span>50 (Fine Detail)</span>
+                <div className="flex justify-between text-[10px] text-neutral-500 font-mono">
+                  <span>Fast (15)</span>
+                  <span>High Detail (50)</span>
                 </div>
               </div>
 
               {/* Seed */}
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 pt-1 border-t border-white/[0.06]">
                 <div className="flex items-center justify-between">
-                  <span className="text-zinc-300 font-medium">Seed</span>
-                  <span className="text-[10px] text-zinc-500">Deterministic Re-rolls</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    value={params.seed}
-                    disabled={disabled}
-                    onChange={(e) =>
-                      onChangeParams({ seed: parseInt(e.target.value, 10) || 0 })
-                    }
-                    className="flex-1 bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"
-                  />
+                  <span className="text-neutral-300">Generation Seed</span>
                   <button
                     type="button"
                     onClick={handleRandomizeSeed}
                     disabled={disabled}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg border border-zinc-700 text-xs transition-colors"
-                    title="Randomize seed"
+                    className="text-[11px] text-neutral-400 hover:text-white flex items-center gap-1 transition-colors"
                   >
-                    <Dices className="w-3.5 h-3.5 text-orange-400" />
-                    <span>🎲</span>
+                    <Dices className="w-3 h-3" />
+                    <span>Randomize</span>
                   </button>
                 </div>
-              </div>
-
-              {/* FPS selection */}
-              <div className="space-y-1.5 pt-1 border-t border-zinc-800/60">
-                <div className="flex items-center justify-between">
-                  <span className="text-zinc-300 font-medium">Frame Rate (FPS)</span>
-                  <span className="font-mono text-zinc-400">{params.fps} fps</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {([24, 30, 60] as const).map((rate) => (
-                    <button
-                      key={rate}
-                      type="button"
-                      onClick={() => onChangeParams({ fps: rate })}
-                      disabled={disabled}
-                      className={`py-1 text-xs font-mono rounded border ${
-                        params.fps === rate
-                          ? 'bg-zinc-800 text-white border-zinc-600'
-                          : 'bg-zinc-950 text-zinc-400 border-zinc-800'
-                      }`}
-                    >
-                      {rate} fps
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="number"
+                  value={params.seed}
+                  disabled={disabled}
+                  onChange={(e) =>
+                    onChangeParams({ seed: Math.max(0, parseInt(e.target.value, 10) || 0) })
+                  }
+                  className="w-full bg-neutral-950 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-mono text-white focus:outline-none focus:border-white/30"
+                />
               </div>
             </div>
           )}
